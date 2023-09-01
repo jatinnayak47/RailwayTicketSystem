@@ -1,0 +1,539 @@
+#include<iostream>
+#include<cmath>
+#include<fstream>
+#include<cstring>
+#include<ctime>
+#include<chrono>
+
+
+using namespace  std;
+
+const int MAX_VALID_YR = 9999;
+const int MIN_VALID_YR = 1800;
+  
+class Guest_Details
+{
+    public:
+        string fname,lname,address,gender,berthpref;
+        int mobileno,age;
+    
+    void getdetails()
+    {
+        cout<<"\n.....Enter Details.....\n";
+        
+            cout<<"\nEnter Name :-";
+            cin>>fname>>lname;
+            cout<<"\nEnter Age :-";
+            cin>>age;
+            cout<<"\nEnter Gender :-";
+            cin>>gender;
+            cout<<"\nEnter Berth Preference :-";
+            cin>>berthpref;
+        
+    }
+    void showdetails()
+    {
+        cout<<"\t"<<fname<<" "<<lname<<"\t\t"<<age<<"\t"<<gender<<" \t"<<berthpref<<endl;
+    }
+};
+
+class railways
+{
+    private:
+        string src,dst,boarding,classs,coachno,tickettype,address,foodservices,conformation,train_name;
+        int pnr,berthno,dd,mm,yyyy,costperperson,totalfair,noadult,nochild,nosenior,totperson,train_no;
+        long long int mobileno;
+        int intial_charge,discount,tatkall,reservationn,generall;
+
+        //Fair Management
+        float dist,cost_to_adult,cost_to_child,cost_to_senior,dis_to_child,dis_to_senior,per_km_cost;
+        float food_per_plate,total_fair,total_ticket_fair,total_food_fair,tax,tax_charge;
+        float unres_ticket,sl_ticket,ac3_ticket,ac2_ticket,ac1_ticket;
+        int option;
+
+        //
+
+public:  
+// Returns true if 
+// given year is valid.
+bool isLeap(int year)
+{
+// Return true if year 
+// is a multiple of 4 and
+// not multiple of 100.
+// OR year is multiple of 400.
+return (((year % 4 == 0) && 
+         (year % 100 != 0)) ||
+         (year % 400 == 0));
+}
+  
+// Returns true if given
+// year is valid or not.
+int valid_date_or_not(int d, int m, int y)
+{
+    // If year, month and day 
+    // are not in given range
+    if (y > MAX_VALID_YR || 
+        y < MIN_VALID_YR)
+    return 0;
+    if (m < 1 || m > 12)
+    return 0;
+    if (d < 1 || d > 31)
+    return 0;
+  
+    // Handle February month 
+    // with leap year
+    if (m == 2)
+    {
+        if (isLeap(y))
+        return (d <= 29);
+        else
+        return (d <= 28);
+    }
+    
+    // Months of April, June, 
+    // Sept and Nov must have 
+    // number of days less than
+    // or equal to 30.
+    if (m == 4 || m == 6 ||
+        m == 9 || m == 11)
+        return (d <= 30);
+  
+    return 1;
+}
+  
+    void getdetail()
+    {
+        int temp;
+        cout<<".....Welcome To Ticket Window....."<<endl;
+        cout<<endl;
+        cout<<"Enter Source Station :-";
+        cin>>src;
+        cout<<"\nEnter Destination Station :-";
+        cin>>dst;
+        cout<<"\nEnter Train Name :-";
+        cin>>train_name;
+        cout<<"\nEnter Train No :-";
+        cin>>train_no;
+        cout<<"\nEnter Boarding Station :-";
+        cin>>boarding;
+        cout<<"\nEnter Date Of Journey :-";
+        cin>>dd>>mm>>yyyy;
+        temp = valid_date_or_not(dd,mm,yyyy);
+        if(temp != 1)
+        {
+            while(temp != 1){
+            cout<<"\nInvalid Date !"<<endl;
+            cout<<"..Try Again.."<<endl;
+            cout<<"\nEnter Date Of Journey :-";
+            cin>>dd>>mm>>yyyy;
+            temp = valid_date_or_not(dd,mm,yyyy);
+            }
+        }
+        cout<<"\nEnter Ticket Type :-";
+        cin>>tickettype;
+        cout<<"\nEnter Class :-";
+        cin>>classs;
+        cout<<"\nEnter Number Of Adult :-";
+        cin>>noadult;
+        cout<<"\nEnter Number Of Child :-";
+        cin>>nochild;
+        cout<<"\nEnter Number Of Senior :-";
+        cin>>nosenior;
+        totperson = noadult+nochild+nosenior;
+
+        Guest_Details G1[totperson];
+        for(int i=0;i<totperson;i++)
+        {
+            G1[i].getdetails();
+        }
+
+        cout<<"\nEnter Mobile No. :-";
+        cin>>mobileno;
+        cout<<"\nEnter Address :-";
+        cin>>address;
+        cout<<"\nFood Service[Y/N] :-";
+        cin>>foodservices;
+        auto givemetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+        fair_calculator();
+
+        cout<<"\nConform Ticket By Pressing[Yes] \nCancle By Pressing[No]\n";
+        cin>>conformation;
+        if(conformation == "Yes" || conformation == "yes")
+        {
+        cout<<"\n-----------------------------------------------------------------------------------\n";
+        cout<<"                             WELCOME TO JATIN'S RAILWAY                            ";
+        cout<<"\n-----------------------------------------------------------------------------------\n";
+        cout<<" "<<src<<" -> "<<dst<<"\t\t"<<dist<<"\t\t\t"<<dd<<"/"<<mm<<"/"<<yyyy<<"\t\t\t";
+        cout<<endl;
+        cout<<"\t"<<classs<<"\t\t\t"<<train_no<<"\t"<<train_name;
+        cout<<endl;
+        cout<<"\t\t\t\t\t\t\t\t\t"<<"RS \\-"<<total_fair<<endl;
+        cout<<endl;
+        for(int i = 0;i<totperson;i++)
+        {
+            G1[i].showdetails();
+        }
+        cout<<endl;
+             cout<<"\t\t\t\t\t\t\t" << ctime(&givemetime) << endl;
+        cout<<"\t\t\t\t"<<" THANK YOU"<<"\t\t\t\t\t";
+        cout<<"\n-----------------------------------------------------------------------------------\n";
+        cout<<"                                  HAPPY JOURNEY                                      ";
+        cout<<"\n-----------------------------------------------------------------------------------\n";
+        }
+        else
+        {
+            cout<<"\nTicket Cancled.";
+            return ;
+        }
+    }
+    void Fair_Management()
+    {
+
+
+        //default ticket cost per km:
+        unres_ticket = 2;
+        sl_ticket = 5;
+        ac1_ticket = 20;
+        ac2_ticket = 15;
+        ac3_ticket = 12;
+        per_km_cost = 2;
+        tax =18;
+
+        //default ticket discout to senior and child in percentage
+        dis_to_child = 35;
+        dis_to_senior = 50;
+
+        //cost of food per plate
+        food_per_plate = 10;
+
+        //cost of different ticket type
+        generall = 0;
+        reservationn = 4;
+        tatkall =6;
+
+        cout<<"\n.......... Welcome To Railway Fair Management System ..........\n";
+        cout<<"\n...Select The Operation To Perform...\n";
+        cout<<"\n1. Set Ticket Fair.";
+        cout<<"\n2. Set Discount .";
+        cout<<"\n3. Set Food Fair.";
+        cout<<"\n4. Set Per KM Fair.";
+        cout<<"\n5. Set Tax."<<endl;
+        cin>>option;
+
+        int new_price;
+        switch (option)
+        {
+            case 1:
+                cout<<"\n...Welcome To Ticket Fair Management System...\n";
+                cout<<"\n...Select The Ticket Type...\n";
+                cout<<"1. Unreserved Ticket.";
+                cout<<"\n2. AC 1st Class.";
+                cout<<"\n3. AC 2nd Class.";
+                cout<<"\n4. AC 3rd Class.";
+                cout<<"\n5. Sleeper Class."<<endl;
+                cin>>option;
+                if(option == 1)
+                {
+                    cout<<"\nEnter New Fair For Unreserved Ticket :-";
+                    cin>>unres_ticket;
+                }
+                else if(option == 2)
+                {
+                    cout<<"\nEnter New Fair For AC 1st Class Ticket :-";
+                    cin>>ac1_ticket;
+                }
+                else if(option == 3)
+                {
+                    cout<<"\nEnter New Fair For AC 2nd Class Ticket :-";
+                    cin>>ac2_ticket;
+                }
+                else if(option == 4)
+                {
+                    cout<<"\nEnter New Fair For AC 3rd Class Ticket :-";
+                    cin>>ac3_ticket;
+                }
+                else if(option == 5)
+                {
+                    cout<<"\nEnter New Fair For Sleeper Class Ticket :-";
+                    cin>>sl_ticket;
+                }
+                else
+                {
+                    cout<<"Invalid Input!"<<endl;
+                }
+                break;
+
+            case 2:
+                cout<<"\n...Welcome To Discount On Fair Management Window...\n";
+                cout<<"\n..Select Option..\n";
+                cout<<"1. Child Ticket.";
+                cout<<"\n2.Senior Citizen.";
+                cin>>option;
+                if(option == 1)
+                {
+                    cout<<"\nEnter New Discount For Child[In Percentage] :-";
+                    cin>>dis_to_child;
+                }
+                else if(option == 2)
+                {
+                    cout<<"\nEnter New Discount For Senior Citizen[In Percentage] :-";
+                    cin>>dis_to_senior;
+                }
+                else
+                {
+                    cout<<"\nInvalid Input !";
+                }
+                break;
+
+            case 3:
+                cout<<"\n...Welcome To Food Fair Management Window...\n";
+
+                cout<<"\nEnter New Fair Of Food Per Plate :-";
+                cin>>food_per_plate;
+                break;
+
+            case 4:
+                cout<<"\n...Welcome To Distance Fair Management Window...\n";
+                cout<<"\nEnter New Per KM Distance Fair :-";
+                cin>>per_km_cost;
+                break;
+            case 5:
+                cout<<"\n...Welcome To Tax Management Window...\n";
+                cout<<"\nEnter New Tax Value[In Percentage] :-";
+                cin>>tax;
+            default :
+                cout<<"\nInvalid Input !";
+                break;
+
+        } 
+
+    }
+    void fair_calculator()
+    {
+
+        pnr = mobileno%100;
+        for(int i=0;i<dst.length();i++)
+        {
+            dist = (rand()*100)/10000;
+        }
+        
+        if(classs == "AC3" ||classs == "ac3")
+        {
+            cost_to_adult = ((dist*per_km_cost*noadult)+(ac3_ticket*noadult));
+
+            intial_charge = ((dist*per_km_cost*nochild)+(ac3_ticket*nochild));
+            discount = intial_charge*(dis_to_child/100);
+            cost_to_child = intial_charge - discount;
+
+            intial_charge = ((dist*per_km_cost*nosenior)+(ac3_ticket*nosenior));
+            discount = intial_charge*(dis_to_senior/100);
+            cost_to_senior = intial_charge - discount;
+            total_ticket_fair = cost_to_adult+cost_to_child+cost_to_senior;
+
+            if(foodservices == "Y" || "y")
+            {
+                total_food_fair = totperson*food_per_plate;
+            }
+            else
+            {
+                total_food_fair = 0;
+            }
+            if(tickettype == "General" ||tickettype == "general")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+generall)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + generall + tax_charge;
+            }
+            else if(tickettype == "Reservation" ||tickettype == "reservation")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+reservationn)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + reservationn + tax_charge;
+            }
+            else if(tickettype == "Tatkal" ||tickettype == "tatkal")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+tatkall)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + tatkall + tax_charge;
+            }
+
+        }       
+        if(classs == "AC2" ||classs == "ac2")
+        {
+            cost_to_adult = ((dist*per_km_cost*noadult)+(ac2_ticket*noadult));
+
+            intial_charge = ((dist*per_km_cost*nochild)+(ac2_ticket*nochild));
+            discount = intial_charge*(dis_to_child/100);
+            cost_to_child = intial_charge - discount;
+
+            intial_charge = ((dist*per_km_cost*nosenior)+(ac2_ticket*nosenior));
+            discount = intial_charge*(dis_to_senior/100);
+            cost_to_senior = intial_charge - discount;
+            total_ticket_fair = cost_to_adult+cost_to_child+cost_to_senior;
+
+            if(foodservices == "Y" || "y")
+            {
+                total_food_fair = totperson*food_per_plate;
+            }
+            else
+            {
+                total_food_fair = 0;
+            }
+            if(tickettype == "General" ||tickettype == "general")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+generall)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + generall + tax_charge;
+            }
+            else if(tickettype == "Reservation" ||tickettype == "reservation")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+reservationn)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + reservationn + tax_charge;
+            }
+            else if(tickettype == "Tatkal" ||tickettype == "tatkal")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+tatkall)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + tatkall + tax_charge;
+            }
+
+        }
+        if(classs == "AC1" ||classs == "ac1")
+        {
+            cost_to_adult = ((dist*per_km_cost*noadult)+(ac1_ticket*noadult));
+
+            intial_charge = ((dist*per_km_cost*nochild)+(ac1_ticket*nochild));
+            discount = intial_charge*(dis_to_child/100);
+            cost_to_child = intial_charge - discount;
+
+            intial_charge = ((dist*per_km_cost*nosenior)+(ac1_ticket*nosenior));
+            discount = intial_charge*(dis_to_senior/100);
+            cost_to_senior = intial_charge - discount;
+            total_ticket_fair = cost_to_adult+cost_to_child+cost_to_senior;
+
+            if(foodservices == "Y" || "y")
+            {
+                total_food_fair = totperson*food_per_plate;
+            }
+            else
+            {
+                total_food_fair = 0;
+            }
+            if(tickettype == "General" ||tickettype == "general")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+generall)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + generall + tax_charge;
+            }
+            else if(tickettype == "Reservation" ||tickettype == "reservation")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+reservationn)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + reservationn + tax_charge;
+            }
+            else if(tickettype == "Tatkal" ||tickettype == "tatkal")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+tatkall)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + tatkall + tax_charge;
+            }
+
+        }
+        if(classs == "Sleeper" ||classs == "sleeper")
+        {
+            cost_to_adult = ((dist*per_km_cost*noadult)+(sl_ticket*noadult));
+
+            intial_charge = ((dist*per_km_cost*nochild)+(sl_ticket*nochild));
+            discount = intial_charge*(dis_to_child/100);
+            cost_to_child = intial_charge - discount;
+
+            intial_charge = ((dist*per_km_cost*nosenior)+(sl_ticket*nosenior));
+            discount = intial_charge*(dis_to_senior/100);
+            cost_to_senior = intial_charge - discount;
+            total_ticket_fair = cost_to_adult+cost_to_child+cost_to_senior;
+
+            if(foodservices == "Y" || "y")
+            {
+                total_food_fair = totperson*food_per_plate;
+            }
+            else
+            {
+                total_food_fair = 0;
+            }
+            if(tickettype == "General" ||tickettype == "general")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+generall)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + generall + tax_charge;
+            }
+            else if(tickettype == "Reservation" ||tickettype == "reservation")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+reservationn)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + reservationn + tax_charge;
+            }
+            else if(tickettype == "Tatkal" ||tickettype == "tatkal")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+tatkall)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + tatkall + tax_charge;
+            }
+
+
+        }
+        if(classs == "General" ||classs == "general")
+        {
+            cost_to_adult = ((dist*per_km_cost*noadult)+(unres_ticket*noadult));
+
+            intial_charge = ((dist*per_km_cost*nochild)+(unres_ticket*nochild));
+            discount = intial_charge*(dis_to_child/100);
+            cost_to_child = intial_charge - discount;
+
+            intial_charge = ((dist*per_km_cost*nosenior)+(unres_ticket*nosenior));
+            discount = intial_charge*(dis_to_senior/100);
+            cost_to_senior = intial_charge - discount;
+            total_ticket_fair = cost_to_adult+cost_to_child+cost_to_senior;
+
+            if(foodservices == "Y" || "y")
+            {
+                total_food_fair = totperson*food_per_plate;
+            }
+            else
+            {
+                total_food_fair = 0;
+            }
+            if(tickettype == "General" ||tickettype == "general")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+generall)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + generall + tax_charge;
+            }
+            else if(tickettype == "Reservation" ||tickettype == "reservation")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+reservationn)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + reservationn + tax_charge;
+            }
+            else if(tickettype == "Tatkal" ||tickettype == "tatkal")
+            {
+                tax_charge = (total_ticket_fair+total_food_fair+tatkall)*(tax/100);
+                total_fair = total_ticket_fair + total_food_fair + tatkall + tax_charge;
+            }
+
+        }
+
+    }
+};
+class roadways{};
+class airways{};
+class stay{};
+class adventure{};
+
+int main()
+{
+    railways R1;
+    int option;
+
+    cin>>option;
+    switch(option)
+    {
+        case 1:
+            R1.getdetail();
+            break;
+        case 2:
+            R1.Fair_Management();
+        default :
+            cout<<"\nInvalid Input.";
+    }
+    
+    
+    return 0;
+}
